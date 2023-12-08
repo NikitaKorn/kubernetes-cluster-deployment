@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: info-service-auto-scaling
+  labels:
+    app: info-service-dep
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: info-service-dep
+  template:
+    metadata:
+      labels:
+        app: info-service-dep
+    spec:
+      containers:
+        - name: info-service-dep
+          image: bothunter/info-service:latest
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta1v1
+    kind: Deployment
+    name: info-service-auto-scaling
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80

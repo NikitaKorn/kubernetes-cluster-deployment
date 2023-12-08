@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: two-containers
+spec:
+  containers:
+    - name: container-web
+      image: nginx:latest
+      ports:
+        - containerPort: 80
+
+    - name: container-api
+      image: tomcat:latest
+      ports:
+        - containerPort: 8080

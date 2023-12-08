@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-deploy
+  labels:
+    app: info-service-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      project: info-service-deploy
+  template:
+    metadata:
+      labels:
+        project: info-service-deploy
+    spec:
+      containers:
+        - name: info-service
+          image: bothunter/info-service:latest
+          ports:
+            - containerPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: single-container-service
+  labels:
+    env: test
+spec:
+  selector:
+    project: info-service-deploy
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: LoadBalancer
